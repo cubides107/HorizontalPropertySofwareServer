@@ -4,6 +4,8 @@ import Models.mangerUser.Client;
 import Models.ServiceApp;
 import Models.persistence.Persistence;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -20,6 +22,7 @@ public class ServerApp {
     public static final String NEW_HOUSE = "NEW_HOUSE";
     public static final String NEW_BUILDING = "NEW_BUILDING";
     public static final String NEW_APARTMENT = "NEW_APARTMENT";
+    public static final String SHOW_PROPERTIES = "SHOW_PROPERTIES";
 
 
     private ArrayList<Connection> listConnections;
@@ -69,32 +72,45 @@ public class ServerApp {
                         case CREATE_HORIZONTAL_PROPERTY:
                             String nameHorizontalProperty = connection.readUTF();
                             serviceApp.setNameHorizontalProperty(nameHorizontalProperty);
-                            persistence.saveUsersXml(nameHorizontalProperty.replace(" ", ""));
+//                            persistence.saveUsersXml( nameHorizontalProperty.replace(" ", ""));
+                            persistence.writeProperty(serviceApp.getNodeRootProperties(),nameHorizontalProperty);
                             break;
                         case REGISTER_USER:
-                            boolean isAddSucces = serviceApp.addUser(new Client(connection.readUTF()));
+                            String nameUser = connection.readUTF();
+                            boolean isAddSucces = serviceApp.addUser(new Client(nameUser));
                             connection.writeUTF(REGISTER_USER);
                             connection.writeBoolean(isAddSucces);
+                            connection.writeUTF(nameUser);
+                            connection.writeInt(serviceApp.getCountUsers()-1);
                             break;
                         case NEW_HOUSE:
                             connection.writeUTF(NEW_HOUSE);
                             connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.addHouse();
+                            serviceApp.printTreeProperties();
+                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
                             break;
                         case NEW_BUILDING:
                             connection.writeUTF(NEW_BUILDING);
                             connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.addBuilding();
+                            serviceApp.printTreeProperties();
+                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
                             break;
                         case NEW_APARTMENT:
                             connection.writeUTF(NEW_APARTMENT);
                             connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.addApartment(connection.readInt());
+                            serviceApp.printTreeProperties();
+                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
+                            break;
+                        case SHOW_PROPERTIES:
+
                             break;
 
                     }
                 }
-            } catch (IOException e) {
+            } catch (IOException | ParserConfigurationException | TransformerException e) {
                 e.printStackTrace();
             }
         }

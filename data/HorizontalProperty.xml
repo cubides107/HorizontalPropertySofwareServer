@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<HorizontalProperty>
+    <Propiedades>
+        <HorizontalPropertyNode>
+            <Name>sadfasdf</Name>
+            <ID>0</ID>
+            <Property>
+                <House>
+                    <ID>1</ID>
+                </House>
+            </Property>
+            <Property>
+                <Building>
+                    <ID>2</ID>
+                </Building>
+            </Property>
+        </HorizontalPropertyNode>
+    </Propiedades>
+</HorizontalProperty>

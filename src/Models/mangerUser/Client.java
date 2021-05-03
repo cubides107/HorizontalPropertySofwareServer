@@ -12,6 +12,11 @@ public class Client implements IDataNode {
        return nameUser;
     }
 
+    @Override
+    public int getId() {
+        return 0;
+    }
+
     public String getNameUser() {
         return nameUser;
     }

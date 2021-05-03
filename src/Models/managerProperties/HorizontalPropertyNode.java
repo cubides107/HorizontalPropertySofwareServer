@@ -1,23 +1,24 @@
 package Models.managerProperties;
 
-public class House implements IDataNodeProperties{
+public class HorizontalPropertyNode implements IDataNodeProperties{
+
+
     private int ID;
 
-    public House(int ID) {
+    public HorizontalPropertyNode(int ID) {
         this.ID = ID;
     }
 
-    public House() {
+    public HorizontalPropertyNode() {
     }
 
     @Override
     public int getID() {
-        return ID;
+        return 0;
     }
 
     @Override
     public void setId(int id) {
         this.ID = ID;
     }
-
 }

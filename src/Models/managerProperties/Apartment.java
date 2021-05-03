@@ -7,13 +7,17 @@ public class Apartment implements IDataNodeProperties{
         this.ID = ID;
     }
 
+    public Apartment() {
+    }
+
     @Override
     public int getID() {
         return ID;
     }
 
     @Override
-    public String getName() {
-        return null;
+    public void setId(int id) {
+        this.ID = ID;
     }
+
 }

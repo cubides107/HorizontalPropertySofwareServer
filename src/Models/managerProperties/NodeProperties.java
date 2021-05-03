@@ -3,26 +3,42 @@ package Models.managerProperties;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class NodePropeties {
+public class NodeProperties {
 
-    private ArrayList<NodePropeties> childList;
-    private NodePropeties father;
+    private ArrayList<NodeProperties> childList;
+    private NodeProperties father;
     private IDataNodeProperties data;
     private int id;
 
-    public NodePropeties(int id, IDataNodeProperties data) {
+    public NodeProperties(int id, IDataNodeProperties data) {
         this.id = id;
         this.data = data;
         childList = new ArrayList<>();
     }
 
-    public void add(NodePropeties newChild){
+    public NodeProperties(int id) {
+        this.id = id;
+    }
+
+    public NodeProperties(IDataNodeProperties data) {
+        this.data = data;
+    }
+
+    public NodeProperties() {
+
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void add(NodeProperties newChild){
         childList.add(newChild);
         newChild.setFather(this);
     }
 
-    public void remove(NodePropeties child){
-        Iterator<NodePropeties> iterator = getChildList().iterator();
+    public void remove(NodeProperties child){
+        Iterator<NodeProperties> iterator = getChildList().iterator();
         while (iterator.hasNext()){
             if(iterator.next().getId() == child.getId()){
                 iterator.remove();
@@ -35,11 +51,11 @@ public class NodePropeties {
         return id;
     }
 
-    public NodePropeties getFirstChild(){
+    public NodeProperties getFirstChild(){
         return childList.get(0);
     }
 
-    public NodePropeties getLastsChild(){
+    public NodeProperties getLastsChild(){
         return childList.get(childList.size() - 1);
     }
 
@@ -47,11 +63,11 @@ public class NodePropeties {
         return childList.size() == 0;
     }
 
-    public ArrayList<NodePropeties> getChildList() {
+    public ArrayList<NodeProperties> getChildList() {
         return childList;
     }
 
-    public NodePropeties getFather() {
+    public NodeProperties getFather() {
         return father;
     }
 
@@ -59,7 +75,7 @@ public class NodePropeties {
         return data;
     }
 
-    public void setFather(NodePropeties father) {
+    public void setFather(NodeProperties father) {
         this.father = father;
     }
 

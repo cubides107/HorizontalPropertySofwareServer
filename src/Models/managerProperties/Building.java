@@ -8,13 +8,17 @@ public class Building implements IDataNodeProperties {
         this.ID = ID;
     }
 
+    public Building() {
+    }
+
     @Override
     public int getID() {
         return ID;
     }
 
     @Override
-    public String getName() {
-        return null;
+    public void setId(int id) {
+        this.ID = ID;
     }
+
 }

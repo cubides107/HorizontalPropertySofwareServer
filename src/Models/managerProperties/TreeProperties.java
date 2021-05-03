@@ -6,17 +6,17 @@ import java.util.Queue;
 
 public class TreeProperties {
 
-    private NodePropeties root;
+    private NodeProperties root;
 
     public TreeProperties(){
     }
 
-    public void setRoot(NodePropeties root) {
+    public void setRoot(NodeProperties root) {
         this.root = root;
     }
 
-    public boolean add(int idFather, NodePropeties newNode){
-        NodePropeties father = search(idFather);
+    public boolean add(int idFather, NodeProperties newNode){
+        NodeProperties father = search(idFather);
         if(father != null){
             father.add(newNode);
             return true;
@@ -36,16 +36,16 @@ public class TreeProperties {
 
 
 
-    public NodePropeties search(int id){
+    public NodeProperties search(int id){
         return search(id, root);
     }
 
-    private NodePropeties search(int id, NodePropeties actual) {
+    private NodeProperties search(int id, NodeProperties actual) {
         if(actual.getId() == id){
            return actual;
         }
-        for (NodePropeties child : actual.getChildList()) {
-            NodePropeties result = search(id, child);
+        for (NodeProperties child : actual.getChildList()) {
+            NodeProperties result = search(id, child);
             if(result != null){
                 return result;
             }
@@ -57,10 +57,10 @@ public class TreeProperties {
         print(root, "");
     }
 
-    private void print(NodePropeties actual, String space) {
+    private void print(NodeProperties actual, String space) {
         System.out.println(space + actual);
         space += "  ";
-        for (NodePropeties child : actual.getChildList()) {
+        for (NodeProperties child : actual.getChildList()) {
             print(child, space);
         }
     }
@@ -69,12 +69,12 @@ public class TreeProperties {
         remove(id, root);
     }
 
-    private boolean remove(int id, NodePropeties actual) {
+    private boolean remove(int id, NodeProperties actual) {
         if(actual.getId() == id){
             actual.getFather().remove(actual);
             return true;
         }
-        Iterator<NodePropeties> iterator = actual.getChildList().iterator();
+        Iterator<NodeProperties> iterator = actual.getChildList().iterator();
         while (iterator.hasNext()){
             if(remove(id, iterator.next())){
                 return true;
@@ -84,7 +84,7 @@ public class TreeProperties {
     }
 
     public void printBreadth(){
-        Queue<NodePropeties> queue = new LinkedList<>();
+        Queue<NodeProperties> queue = new LinkedList<>();
         queue.add(root);
         printBreadth(root, queue);
         while (!queue.isEmpty()){
@@ -92,16 +92,16 @@ public class TreeProperties {
         }
     }
 
-    private void printBreadth(NodePropeties base, Queue<NodePropeties> queue) {
-        for (NodePropeties child : base.getChildList()) {
+    private void printBreadth(NodeProperties base, Queue<NodeProperties> queue) {
+        for (NodeProperties child : base.getChildList()) {
             queue.add(child);
         }
-        for (NodePropeties child : base.getChildList()) {
+        for (NodeProperties child : base.getChildList()) {
             printBreadth(child, queue);
         }
     }
 
-    public NodePropeties getRoot(){
+    public NodeProperties getRoot(){
         return root;
     }
 
