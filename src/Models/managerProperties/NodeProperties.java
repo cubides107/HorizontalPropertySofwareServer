@@ -107,6 +107,6 @@ public class NodeProperties {
 
     @Override
     public String toString() {
-        return "{" + "id=" + id + "-" + "}";
+        return "{" + "id=" + id + "-" +"dataId: "+data.getID() + "}";
     }
 }

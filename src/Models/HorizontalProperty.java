@@ -35,6 +35,7 @@ public class HorizontalProperty {
 
     public void addPropertyToUser(int idFather, PropertyNodeUser propertyNodeUser){
         treeUsers.add(idFather,new NodeUser(countUsers++,propertyNodeUser));
+        treeUsers.print();
     }
 
 
@@ -43,7 +44,6 @@ public class HorizontalProperty {
         HorizontalPropertyNode horizontalProperty = new HorizontalPropertyNode(0);
         treeProperties.setRoot(new NodeProperties(0, horizontalProperty));
         treeUsers.setRoot(new NodeUser( 0,new Client(name)));
-        System.out.println(name);
     }
 
     public  void addPropertyToClient(int idFather,int idProperty){

@@ -10,7 +10,7 @@ public class PropertyNodeUser implements IDataNode{
 
     @Override
     public String getName() {
-        return null;
+        return "Propiedad" + id;
     }
 
     @Override

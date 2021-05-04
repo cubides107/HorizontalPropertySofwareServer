@@ -2,6 +2,7 @@ package Models.network;
 
 import Models.mangerUser.Client;
 import Models.ServiceApp;
+import Models.mangerUser.PropertyNodeUser;
 import Models.persistence.Persistence;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,6 +24,8 @@ public class ServerApp {
     public static final String NEW_BUILDING = "NEW_BUILDING";
     public static final String NEW_APARTMENT = "NEW_APARTMENT";
     public static final String SHOW_PROPERTIES = "SHOW_PROPERTIES";
+    public static final String ADD_HOUSE_USER = "ADD_HOUSE_USER";
+    public static final String ADD_APARTMENT_USER = "ADD_APARTMENT_USER";
 
 
     private ArrayList<Connection> listConnections;
@@ -107,7 +110,23 @@ public class ServerApp {
                         case SHOW_PROPERTIES:
 
                             break;
-
+                        case ADD_HOUSE_USER:
+                            connection.writeUTF(ADD_HOUSE_USER);
+                            connection.writeInt(serviceApp.getCountProperties());
+                            int idFather = connection.readInt();
+                            serviceApp.addPropertyToUser(idFather,new PropertyNodeUser(serviceApp.getCountProperties()));
+                            break;
+                        case ADD_APARTMENT_USER:
+                            connection.writeUTF(ADD_APARTMENT_USER);
+                            connection.writeInt(serviceApp.getCountProperties()-1);
+                            int idFatherApartment = connection.readInt();
+                            serviceApp.addPropertyToUser(idFatherApartment,new PropertyNodeUser(serviceApp.getCountProperties()-1));
+                            break;
+                        case "SET_PROPERTY_TO_USER":
+                            int idUser = connection.readInt();
+                            int idProperty = connection.readInt();
+                            serviceApp.addPropertyToUser(idUser,new PropertyNodeUser(idProperty));
+                            break;
                     }
                 }
             } catch (IOException | ParserConfigurationException | TransformerException e) {

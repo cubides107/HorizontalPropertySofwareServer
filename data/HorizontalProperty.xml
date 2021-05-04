@@ -2,16 +2,37 @@
 <HorizontalProperty>
     <Propiedades>
         <HorizontalPropertyNode>
-            <Name>sadfasdf</Name>
+            <Name>Ciudadela</Name>
             <ID>0</ID>
             <Property>
-                <House>
+                <Building>
                     <ID>1</ID>
+                    <Apartment>
+                        <ID>2</ID>
+                    </Apartment>
+                </Building>
+            </Property>
+            <Property>
+                <House>
+                    <ID>3</ID>
+                </House>
+            </Property>
+            <Property>
+                <House>
+                    <ID>4</ID>
+                </House>
+            </Property>
+            <Property>
+                <House>
+                    <ID>5</ID>
                 </House>
             </Property>
             <Property>
                 <Building>
-                    <ID>2</ID>
+                    <ID>6</ID>
+                    <Apartment>
+                        <ID>7</ID>
+                    </Apartment>
                 </Building>
             </Property>
         </HorizontalPropertyNode>

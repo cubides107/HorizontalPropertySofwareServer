@@ -91,6 +91,6 @@ public class NodeUser {
 
     @Override
     public String toString() {
-        return "{" + "id=" + id + "-" + "}";
+        return "{" + "id=" + id + "-" +"data Id: " + data.getId() +"}";
     }
 }
