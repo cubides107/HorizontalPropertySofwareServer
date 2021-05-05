@@ -64,6 +64,11 @@ public class HorizontalProperty {
         countProperties++;
     }
 
+    public void addPool(){
+        treeProperties.add(0, new NodeProperties(countProperties,new Pool(countProperties)));
+        countProperties++;
+    }
+
     public void addApartment(int idFather) {
         NodeProperties nodeAux = treeProperties.search(idFather);
         treeProperties.add(nodeAux.getId(), new NodeProperties(countProperties, new Apartment(countProperties)));
@@ -90,4 +95,25 @@ public class HorizontalProperty {
         this.name = name;
     }
 
+    public void addField() {
+        treeProperties.add(0, new NodeProperties(countProperties,new Field(countProperties)));
+        countProperties++;
+    }
+
+    public void addCommonRoom() {
+        treeProperties.add(0, new NodeProperties(countProperties,new CommonRoom(countProperties)));
+        countProperties++;
+    }
+
+    public void deleteProperty(int idProperty) {
+        treeProperties.remove(idProperty);
+    }
+
+    public void deleteUser(int idUserToDelete) {
+        treeUsers.remove(idUserToDelete);
+    }
+
+    public void printTreeUsers() {
+        treeUsers.print();
+    }
 }

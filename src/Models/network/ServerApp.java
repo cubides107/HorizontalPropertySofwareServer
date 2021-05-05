@@ -26,6 +26,9 @@ public class ServerApp {
     public static final String SHOW_PROPERTIES = "SHOW_PROPERTIES";
     public static final String ADD_HOUSE_USER = "ADD_HOUSE_USER";
     public static final String ADD_APARTMENT_USER = "ADD_APARTMENT_USER";
+    public static final String NEW_POOL = "NEW_POOL";
+    public static final String NEW_FIELD = "NEW_FIELD";
+    public static final String NEW_ADD_COMMON_ROOM = "NEW_ADD_COMMON_ROOM";
 
 
     private ArrayList<Connection> listConnections;
@@ -126,6 +129,37 @@ public class ServerApp {
                             int idUser = connection.readInt();
                             int idProperty = connection.readInt();
                             serviceApp.addPropertyToUser(idUser,new PropertyNodeUser(idProperty));
+                            break;
+                        case NEW_POOL:
+                            connection.writeUTF(NEW_POOL);
+                            connection.writeInt(serviceApp.getCountProperties());
+                            serviceApp.addPool();
+                            serviceApp.printTreeProperties();
+                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
+                            break;
+                        case NEW_FIELD:
+                            connection.writeUTF(NEW_FIELD);
+                            connection.writeInt(serviceApp.getCountProperties());
+                            serviceApp.addNewField();
+                            serviceApp.printTreeProperties();
+                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
+                            break;
+                        case NEW_ADD_COMMON_ROOM:
+                            connection.writeUTF(NEW_ADD_COMMON_ROOM);
+                            connection.writeInt(serviceApp.getCountProperties());
+                            serviceApp.addNewCommonRoom();
+                            serviceApp.printTreeProperties();
+                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
+                            break;
+                        case "DELETE_PROPERTY":
+                            int idPropertyToDelete = connection.readInt();
+                            serviceApp.deleteProperty(idPropertyToDelete);
+                            serviceApp.printTreeProperties();
+                            break;
+                        case "DELETE_USER":
+                            int idUserToDelete = connection.readInt();
+                            serviceApp.deleteUser(idUserToDelete);
+                            serviceApp.printTreeUsers();
                             break;
                     }
                 }

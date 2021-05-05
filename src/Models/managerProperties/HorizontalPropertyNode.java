@@ -10,6 +10,7 @@ public class HorizontalPropertyNode implements IDataNodeProperties{
     }
 
     public HorizontalPropertyNode() {
+
     }
 
     @Override
