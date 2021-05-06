@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<julian>
+    <Property>
+        <House>
+            <ID>1</ID>
+        </House>
+    </Property>
+    <Property>
+        <House>
+            <ID>2</ID>
+        </House>
+    </Property>
+    <Property>
+        <House>
+            <ID>3</ID>
+        </House>
+    </Property>
+</julian>

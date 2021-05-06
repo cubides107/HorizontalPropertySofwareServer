@@ -31,6 +31,18 @@ public class NodeUser {
         }
     }
 
+    public void removeByIdData(NodeUser child){
+        Iterator<NodeUser> iterator = getChildList().iterator();
+        while (iterator.hasNext()){
+            if(iterator.next().getData().getId() == child.getData().getId()){
+                iterator.remove();
+                return;
+            }
+        }
+    }
+
+
+
     public int getId() {
         return id;
     }
@@ -91,6 +103,6 @@ public class NodeUser {
 
     @Override
     public String toString() {
-        return "{" + "id=" + id + "-" +"data Id: " + data.getId() +"}";
+        return "{ User: " + "id=" + id + "-" +"data Id: " + data.getId() +"}";
     }
 }

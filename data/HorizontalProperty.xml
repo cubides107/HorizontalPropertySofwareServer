@@ -4,6 +4,16 @@
         <HorizontalPropertyNode>
             <Name>Ciudadela</Name>
             <ID>0</ID>
+            <Property>
+                <House>
+                    <ID>1</ID>
+                </House>
+            </Property>
+            <Property>
+                <House>
+                    <ID>2</ID>
+                </House>
+            </Property>
         </HorizontalPropertyNode>
     </Propiedades>
 </HorizontalProperty>

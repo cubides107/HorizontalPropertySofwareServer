@@ -1,6 +1,7 @@
 package Models.persistence;
 
 import Models.managerProperties.NodeProperties;
+import Models.mangerUser.NodeUser;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -10,8 +11,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 public class Persistence {
 
@@ -52,6 +52,39 @@ public class Persistence {
     }
 
 
+    public ByteArrayOutputStream writeXmlToUser(NodeUser root) throws ParserConfigurationException, TransformerException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        DOMImplementation implementation = builder.getDOMImplementation();
+        Document document = implementation.createDocument(null, root.getData().getName(), null);
+        document.setXmlVersion("1.0");
+        Element rootXml = document.getDocumentElement();
+        writeXmlToUser(root, document, rootXml);
+
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        transformer.transform(new DOMSource(document),new StreamResult(out));
+        return  out;
+    }
+
+    private Element writeXmlToUser(NodeUser actual, Document document, Element rootXML) {
+        if (!(actual.getData().getClass().getSimpleName()).equals("Client")) {
+            Element property = document.createElement(actual.getData().getName());
+            Element idProperty = document.createElement("ID");
+            Text textIdent = document.createTextNode(String.valueOf(actual.getData().getId()));
+            idProperty.appendChild(textIdent);
+            property.appendChild(idProperty);
+            rootXML.appendChild(property);
+        }
+
+        for (NodeUser child : actual.getChildList()) {
+            writeXmlToUser(child, document, rootXML);
+        }
+        return rootXML;
+    }
+
+
     public void writeProperty(NodeProperties root, String name) throws ParserConfigurationException, TransformerException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -64,10 +97,18 @@ public class Persistence {
         rootXml.appendChild(properties);
         Source source = new DOMSource(document);
         Result result = new StreamResult(new File("data/" + "HorizontalProperty" + ".xml"));
+
+        StringWriter writer = new StringWriter();
+        Result result1 = new StreamResult(writer);
+
+
+        System.out.println(writer.getBuffer().toString());
+
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.transform(source, result);
     }
+
 
     private Element writeProperty(String name, NodeProperties actual, Element properties, Document document) {
         Element propertyTags = document.createElement("Property");
@@ -94,16 +135,11 @@ public class Persistence {
         return properties;
     }
 
-
-
-
     public void readProperty() throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document documento = builder.parse(new File("data/" + "HorizontalProperty" + ".xml"));
         NodeList listProperty = documento.getElementsByTagName("Property");
-
-
 
 
         for (int i = 0; i < listProperty.getLength(); i++) {
@@ -120,7 +156,7 @@ public class Persistence {
                         Node item1 = childNodes.item(k);
                         if (nodeName.getNodeType() == Node.ELEMENT_NODE) {
                             System.out.println(" " + nodeName.getNodeName());
-                            System.out.println("  " +item1.getTextContent());
+                            System.out.println("  " + item1.getTextContent());
                         }
                     }
                 }
@@ -150,7 +186,7 @@ public class Persistence {
         }
 
 
-   }
+    }
 
     public static void main(String[] args) {
         try {

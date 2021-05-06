@@ -6,6 +6,8 @@ import Models.mangerUser.NodeUser;
 import Models.mangerUser.PropertyNodeUser;
 import Models.mangerUser.TreeUsers;
 
+import java.io.File;
+
 public class HorizontalProperty {
 
     private String name;
@@ -33,8 +35,8 @@ public class HorizontalProperty {
         return false;
     }
 
-    public void addPropertyToUser(int idFather, PropertyNodeUser propertyNodeUser){
-        treeUsers.add(idFather,new NodeUser(countUsers++,propertyNodeUser));
+    public void addPropertyToUser(int idFather, PropertyNodeUser propertyNodeUser) {
+        treeUsers.add(idFather, new NodeUser(countUsers++, propertyNodeUser));
         treeUsers.print();
     }
 
@@ -43,10 +45,10 @@ public class HorizontalProperty {
         this.name = name;
         HorizontalPropertyNode horizontalProperty = new HorizontalPropertyNode(0);
         treeProperties.setRoot(new NodeProperties(0, horizontalProperty));
-        treeUsers.setRoot(new NodeUser( 0,new Client(name)));
+        treeUsers.setRoot(new NodeUser(0, new Client(name)));
     }
 
-    public  void addPropertyToClient(int idFather,int idProperty){
+    public void addPropertyToClient(int idFather, int idProperty) {
 //        treeUsers.addUser(new NodeUser(idFather,new PropertyNodeUser(idProperty)));
     }
 
@@ -64,8 +66,8 @@ public class HorizontalProperty {
         countProperties++;
     }
 
-    public void addPool(){
-        treeProperties.add(0, new NodeProperties(countProperties,new Pool(countProperties)));
+    public void addPool() {
+        treeProperties.add(0, new NodeProperties(countProperties, new Pool(countProperties)));
         countProperties++;
     }
 
@@ -75,7 +77,7 @@ public class HorizontalProperty {
         countProperties++;
     }
 
-    public void printTreeProperties(){
+    public void printTreeProperties() {
         treeProperties.print();
     }
 
@@ -96,12 +98,12 @@ public class HorizontalProperty {
     }
 
     public void addField() {
-        treeProperties.add(0, new NodeProperties(countProperties,new Field(countProperties)));
+        treeProperties.add(0, new NodeProperties(countProperties, new Field(countProperties)));
         countProperties++;
     }
 
     public void addCommonRoom() {
-        treeProperties.add(0, new NodeProperties(countProperties,new CommonRoom(countProperties)));
+        treeProperties.add(0, new NodeProperties(countProperties, new CommonRoom(countProperties)));
         countProperties++;
     }
 
@@ -115,5 +117,17 @@ public class HorizontalProperty {
 
     public void printTreeUsers() {
         treeUsers.print();
+    }
+
+    public void deletePropertyToUser(int idProperty) {
+        treeUsers.deletePropertyToUser(idProperty);
+    }
+
+    public boolean checkIsExitsUser(String name) {
+        return treeUsers.checkExistUser(name);
+    }
+
+    public NodeUser searchByNameUser(String nameUser){
+        return treeUsers.searchByNameUser(nameUser);
     }
 }

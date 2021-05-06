@@ -2,14 +2,22 @@ package Models;
 
 import Models.managerProperties.*;
 import Models.mangerUser.Client;
+import Models.mangerUser.NodeUser;
 import Models.mangerUser.PropertyNodeUser;
+import Models.persistence.Persistence;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.ByteArrayOutputStream;
 
 public class ServiceApp {
 
     private HorizontalProperty horizontalProperty;
+    private Persistence persistence;
 
     public ServiceApp() {
         horizontalProperty = new HorizontalProperty();
+        persistence = new Persistence();
     }
 
     public void setNameHorizontalProperty(String name) {
@@ -56,7 +64,7 @@ public class ServiceApp {
         horizontalProperty.printTreeProperties();
     }
 
-    public void printTreeUsers(){
+    public void printTreeUsers() {
         horizontalProperty.printTreeUsers();
     }
 
@@ -79,4 +87,20 @@ public class ServiceApp {
     public void deleteUser(int idUserToDelete) {
         horizontalProperty.deleteUser(idUserToDelete);
     }
+
+    public void deletePropertyToUser(int idProperty) {
+        horizontalProperty.deletePropertyToUser(idProperty);
+    }
+
+    public boolean checkIsExitsUser(String nameUser) {
+        return horizontalProperty.checkIsExitsUser(nameUser);
+    }
+
+    public ByteArrayOutputStream createXmlToUser(String nameUser) throws ParserConfigurationException, TransformerException {
+        NodeUser nodeUser = horizontalProperty.searchByNameUser(nameUser);
+        return persistence.writeXmlToUser(nodeUser);
+
+    }
+
+
 }

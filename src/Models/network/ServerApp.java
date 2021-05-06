@@ -1,5 +1,6 @@
 package Models.network;
 
+import Models.managerProperties.Apartment;
 import Models.mangerUser.Client;
 import Models.ServiceApp;
 import Models.mangerUser.PropertyNodeUser;
@@ -7,6 +8,9 @@ import Models.persistence.Persistence;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -68,6 +72,11 @@ public class ServerApp {
     }
 
     private void readRequest() {
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Iterator<Connection> iterator = listConnections.iterator();
         while (iterator.hasNext()) {
             Connection connection = iterator.next();
@@ -79,7 +88,7 @@ public class ServerApp {
                             String nameHorizontalProperty = connection.readUTF();
                             serviceApp.setNameHorizontalProperty(nameHorizontalProperty);
 //                            persistence.saveUsersXml( nameHorizontalProperty.replace(" ", ""));
-                            persistence.writeProperty(serviceApp.getNodeRootProperties(),nameHorizontalProperty);
+                            persistence.writeProperty(serviceApp.getNodeRootProperties(), nameHorizontalProperty);
                             break;
                         case REGISTER_USER:
                             String nameUser = connection.readUTF();
@@ -87,7 +96,7 @@ public class ServerApp {
                             connection.writeUTF(REGISTER_USER);
                             connection.writeBoolean(isAddSucces);
                             connection.writeUTF(nameUser);
-                            connection.writeInt(serviceApp.getCountUsers()-1);
+                            connection.writeInt(serviceApp.getCountUsers() - 1);
                             break;
                         case NEW_HOUSE:
                             connection.writeUTF(NEW_HOUSE);
@@ -117,18 +126,18 @@ public class ServerApp {
                             connection.writeUTF(ADD_HOUSE_USER);
                             connection.writeInt(serviceApp.getCountProperties());
                             int idFather = connection.readInt();
-                            serviceApp.addPropertyToUser(idFather,new PropertyNodeUser(serviceApp.getCountProperties()));
+                            serviceApp.addPropertyToUser(idFather, new PropertyNodeUser(serviceApp.getCountProperties(), "House"));
                             break;
                         case ADD_APARTMENT_USER:
                             connection.writeUTF(ADD_APARTMENT_USER);
-                            connection.writeInt(serviceApp.getCountProperties()-1);
+                            connection.writeInt(serviceApp.getCountProperties() - 1);
                             int idFatherApartment = connection.readInt();
-                            serviceApp.addPropertyToUser(idFatherApartment,new PropertyNodeUser(serviceApp.getCountProperties()-1));
+                            serviceApp.addPropertyToUser(idFatherApartment, new PropertyNodeUser(serviceApp.getCountProperties() - 1, "Apartment"));
                             break;
                         case "SET_PROPERTY_TO_USER":
                             int idUser = connection.readInt();
                             int idProperty = connection.readInt();
-                            serviceApp.addPropertyToUser(idUser,new PropertyNodeUser(idProperty));
+                            serviceApp.addPropertyToUser(idUser, new PropertyNodeUser(idProperty, connection.readUTF()));
                             break;
                         case NEW_POOL:
                             connection.writeUTF(NEW_POOL);
@@ -155,11 +164,28 @@ public class ServerApp {
                             int idPropertyToDelete = connection.readInt();
                             serviceApp.deleteProperty(idPropertyToDelete);
                             serviceApp.printTreeProperties();
+                            serviceApp.deletePropertyToUser(idPropertyToDelete);
+                            serviceApp.printTreeUsers();
                             break;
                         case "DELETE_USER":
                             int idUserToDelete = connection.readInt();
                             serviceApp.deleteUser(idUserToDelete);
                             serviceApp.printTreeUsers();
+                            break;
+                        case "DELETE_PROPERTY_TO_USER":
+                            idUserToDelete = connection.readInt();
+                            serviceApp.deletePropertyToUser(idUserToDelete);
+                            serviceApp.printTreeUsers();
+                            break;
+
+                        ///Client Request
+                        case "NEW_CLIENT":
+                            nameUser = connection.readUTF();
+                            boolean isExistUser = serviceApp.checkIsExitsUser(nameUser);
+                            connection.writeUTF("NEW_CLIENT");
+                            connection.writeBoolean(isExistUser);
+                            ByteArrayOutputStream xmlToUser = serviceApp.createXmlToUser(nameUser);
+                            connection.sendFile(xmlToUser);
                             break;
                     }
                 }

@@ -1,5 +1,6 @@
 package Models.mangerUser;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -41,12 +42,32 @@ public class TreeUsers {
         return search(id, root);
     }
 
+
+
+
     private NodeUser search(int id, NodeUser actual) {
         if(actual.getId() == id){
            return actual;
         }
         for (NodeUser child : actual.getChildList()) {
             NodeUser result = search(id, child);
+            if(result != null){
+                return result;
+            }
+        }
+        return null;
+    }
+
+    public NodeUser searchByNameUser(String nameUser){
+        return searchByNameUser(nameUser, root);
+    }
+
+    private NodeUser searchByNameUser(String nameUser, NodeUser actual) {
+        if(actual.getData().getName().equals(nameUser)){
+            return actual;
+        }
+        for (NodeUser child : actual.getChildList()) {
+            NodeUser result = searchByNameUser(nameUser, child);
             if(result != null){
                 return result;
             }
@@ -84,6 +105,24 @@ public class TreeUsers {
         return false;
     }
 
+    public void removeByIdData(int id){
+        removeByIdData(id, root);
+    }
+
+    private boolean removeByIdData(int id, NodeUser actual) {
+        if(actual.getData().getId() == id){
+            actual.getFather().removeByIdData(actual);
+            return true;
+        }
+        Iterator<NodeUser> iterator = actual.getChildList().iterator();
+        while (iterator.hasNext()){
+            if(removeByIdData(id, iterator.next())){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void printBreadth(){
         Queue<NodeUser> queue = new LinkedList<>();
         queue.add(root);
@@ -91,6 +130,13 @@ public class TreeUsers {
         while (!queue.isEmpty()){
             System.out.println(queue.poll().getData().getName());
         }
+    }
+
+
+
+
+    public File fileWriteToUser(String nameUser){
+        return  null;
     }
 
     private void printBreadth(NodeUser base, Queue<NodeUser> queue) {
@@ -106,4 +152,7 @@ public class TreeUsers {
         return root;
     }
 
+    public void deletePropertyToUser(int idProperty) {
+        removeByIdData(idProperty);
+    }
 }

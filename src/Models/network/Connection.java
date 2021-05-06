@@ -22,6 +22,34 @@ public class Connection {
         }
     }
 
+    public void sendFile(ByteArrayOutputStream output) {
+        try {
+//            File file = new File(pathFile);
+//            int sizeFile = (int) file.length();
+//            outputChanel.writeUTF(file.getName());
+            outputChanel.writeInt(output.size());
+
+//            System.out.println("Enviando Archivo" + file.getName());
+
+//            BufferedInputStream bufferedInput = new BufferedInputStream(new FileInputStream(file));
+            BufferedOutputStream bufferedOutput = new BufferedOutputStream(outputChanel);
+
+            byte[] bytes = output.toByteArray();
+//            byte[] bytesFile = new byte[output.totoByteArray()];
+//            bufferedInput.read(output);
+
+            for (int i = 0; i < bytes.length; i++) {
+                bufferedOutput.write(bytes[i]);
+            }
+//            bufferedInput.close();
+            bufferedOutput.flush();
+            System.out.println("Archivo Enviado");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public synchronized void writeUTF(String message) {
         try {
             outputChanel.writeUTF(message);
