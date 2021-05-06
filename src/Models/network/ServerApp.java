@@ -1,6 +1,5 @@
 package Models.network;
 
-import Models.managerProperties.Apartment;
 import Models.mangerUser.Client;
 import Models.ServiceApp;
 import Models.mangerUser.PropertyNodeUser;
@@ -9,8 +8,6 @@ import Models.persistence.Persistence;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -187,6 +184,45 @@ public class ServerApp {
                             ByteArrayOutputStream xmlToUser = serviceApp.createXmlToUser(nameUser);
                             connection.sendFile(xmlToUser);
                             break;
+                        case "ADD_SERVICE_WATER":
+                            connection.writeUTF("ADD_SERVICE_WATER");
+                            connection.writeInt(serviceApp.getCountProperties());
+                            idProperty = connection.readInt();
+                            serviceApp.addWaterServiceToProperty(idProperty);
+                            serviceApp.printTreeProperties();
+                            break;
+
+                        case "ADD_SERVICE_ELECTRICITY":
+                            connection.writeUTF("ADD_SERVICE_ELECTRICITY");
+                            connection.writeInt(serviceApp.getCountProperties());
+                            idProperty = connection.readInt();
+                            serviceApp.addElectricityServiceToProperty(idProperty);
+                            serviceApp.printTreeProperties();
+                            break;
+
+                        case "ADD_SERVICE_GAS":
+                            connection.writeUTF("ADD_SERVICE_GAS");
+                            connection.writeInt(serviceApp.getCountProperties());
+                            idProperty = connection.readInt();
+                            serviceApp.addGasServiceToProperty(idProperty);
+                            serviceApp.printTreeProperties();
+                            break;
+
+                        case "ADD_SERVICE_INTERNET":
+                            connection.writeUTF("ADD_SERVICE_INTERNET");
+                            connection.writeInt(serviceApp.getCountProperties());
+                            idProperty = connection.readInt();
+                            serviceApp.addInternetServiceToProperty(idProperty);
+                            serviceApp.printTreeProperties();
+                            break;
+                        case "ADD_NEW_BILL":
+                            connection.writeUTF("ADD_NEW_BILL");
+                            connection.writeInt(serviceApp.getCountProperties());
+                            String[] data = connection.readUTF().split("#");
+                            serviceApp.addWrapperService(data);
+                            serviceApp.printTreeProperties();
+                            break;
+
                     }
                 }
             } catch (IOException | ParserConfigurationException | TransformerException e) {

@@ -1,5 +1,6 @@
 package Models;
 
+import Models.Services.WaterService;
 import Models.managerProperties.*;
 import Models.mangerUser.Client;
 import Models.mangerUser.NodeUser;
@@ -103,4 +104,23 @@ public class ServiceApp {
     }
 
 
+    public void addWaterServiceToProperty(int idProperty) {
+        horizontalProperty.addServiceToProperty(idProperty);
+    }
+
+    public void addElectricityServiceToProperty(int idProperty) {
+        horizontalProperty.addElectricityService(idProperty);
+    }
+
+    public void addGasServiceToProperty(int idProperty) {
+        horizontalProperty.addGasService(idProperty);
+    }
+
+    public void addInternetServiceToProperty(int idProperty) {
+        horizontalProperty.addInternetService(idProperty);
+    }
+
+    public void addWrapperService(String[] data) {
+        horizontalProperty.addWrapperService(data);
+    }
 }

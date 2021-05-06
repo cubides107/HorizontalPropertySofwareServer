@@ -1,5 +1,6 @@
 package Models;
 
+import Models.Services.*;
 import Models.managerProperties.*;
 import Models.mangerUser.Client;
 import Models.mangerUser.NodeUser;
@@ -7,6 +8,8 @@ import Models.mangerUser.PropertyNodeUser;
 import Models.mangerUser.TreeUsers;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class HorizontalProperty {
 
@@ -127,7 +130,37 @@ public class HorizontalProperty {
         return treeUsers.checkExistUser(name);
     }
 
-    public NodeUser searchByNameUser(String nameUser){
+    public NodeUser searchByNameUser(String nameUser) {
         return treeUsers.searchByNameUser(nameUser);
+    }
+
+    public void addServiceToProperty(int idProperty) {
+        treeProperties.add(idProperty, new NodeProperties(countProperties, new WaterService(countProperties)));
+        countProperties++;
+    }
+
+    public void addElectricityService(int idProperty) {
+        treeProperties.add(idProperty, new NodeProperties(countProperties, new ElectricityService(countProperties)));
+        countProperties++;
+    }
+
+    public void addGasService(int idProperty) {
+        treeProperties.add(idProperty, new NodeProperties(countProperties, new GasService(countProperties)));
+        countProperties++;
+    }
+
+    public void addInternetService(int idProperty) {
+        treeProperties.add(idProperty, new NodeProperties(countProperties, new InternetService(countProperties)));
+        countProperties++;
+    }
+
+    public void addWrapperService(String[] data) {
+        treeProperties.add(Integer.parseInt(data[2]), new NodeProperties(countProperties, new WrapperService(convertDate(data[0]), Double.parseDouble(data[1]))));
+        countProperties++;
+    }
+
+    private LocalDate convertDate(String text) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(text, formatter);
     }
 }
