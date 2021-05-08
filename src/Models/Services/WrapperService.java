@@ -14,6 +14,9 @@ public class WrapperService implements IDataNodeProperties {
         this.value = value;
     }
 
+    public WrapperService() {
+    }
+
     @Override
     public int getID() {
         return 0;

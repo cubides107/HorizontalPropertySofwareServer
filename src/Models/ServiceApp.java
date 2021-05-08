@@ -1,6 +1,5 @@
 package Models;
 
-import Models.Services.WaterService;
 import Models.managerProperties.*;
 import Models.mangerUser.Client;
 import Models.mangerUser.NodeUser;
@@ -10,6 +9,8 @@ import Models.persistence.Persistence;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServiceApp {
 
@@ -99,7 +100,21 @@ public class ServiceApp {
 
     public ByteArrayOutputStream createXmlToUser(String nameUser) throws ParserConfigurationException, TransformerException {
         NodeUser nodeUser = horizontalProperty.searchByNameUser(nameUser);
-        return persistence.writeXmlToUser(nodeUser);
+        ArrayList<NodeUser> childList = nodeUser.getChildList();
+        ArrayList<NodeProperties> listPropertiesToUser = new ArrayList<>();
+        for (NodeUser node:childList) {
+            listPropertiesToUser.add(horizontalProperty.searchPropertyToUser(node.getData().getId()));
+        }
+        return persistence.writeXmlToUser(nodeUser,listPropertiesToUser);
+    }
+
+    public void  createUsersBYXml(){
+        NodeUser nodeRootUsers = horizontalProperty.getNodeRootUsers();
+        ArrayList<NodeUser> childList = nodeRootUsers.getChildList();
+        ArrayList<NodeProperties> listPropertiesToUser = new ArrayList<>();
+        for (NodeUser node:childList) {
+            listPropertiesToUser.add(horizontalProperty.searchPropertyToUser(node.getData().getId()));
+        }
 
     }
 
@@ -122,5 +137,29 @@ public class ServiceApp {
 
     public void addWrapperService(String[] data) {
         horizontalProperty.addWrapperService(data);
+    }
+
+    public void setRootProperties(NodeProperties nodeRoot) {
+        horizontalProperty.setRootProperties(nodeRoot);
+    }
+
+    public ByteArrayOutputStream writePropertyInMemory() throws ParserConfigurationException, TransformerException {
+       return persistence.writePropertyInMemory(horizontalProperty.getNodeRootProperties(), horizontalProperty.getName());
+    }
+
+    public void setCountProperties(AtomicInteger atomicInteger) {
+        horizontalProperty.setCountProperties(atomicInteger);
+    }
+
+    public NodeUser getNodeRootUsers() {
+        return horizontalProperty.getNodeRootUsers();
+    }
+
+    public void setRootUsers(NodeUser nodeUsers) {
+        horizontalProperty.setNodeRootUsers(nodeUsers);
+    }
+
+    public void setCountUsers(AtomicInteger atomicInteger1) {
+        horizontalProperty.setCountUsers(atomicInteger1);
     }
 }

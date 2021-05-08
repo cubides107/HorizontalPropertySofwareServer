@@ -4,6 +4,7 @@ import Models.mangerUser.Client;
 import Models.ServiceApp;
 import Models.mangerUser.PropertyNodeUser;
 import Models.persistence.Persistence;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -13,6 +14,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -85,7 +87,17 @@ public class ServerApp {
                             String nameHorizontalProperty = connection.readUTF();
                             serviceApp.setNameHorizontalProperty(nameHorizontalProperty);
 //                            persistence.saveUsersXml( nameHorizontalProperty.replace(" ", ""));
-                            persistence.writeProperty(serviceApp.getNodeRootProperties(), nameHorizontalProperty);
+                            AtomicInteger atomicInteger = new AtomicInteger();
+                            AtomicInteger atomicInteger1 = new AtomicInteger();
+                            try {
+                                serviceApp.setRootProperties(persistence.readXml(atomicInteger));
+                                serviceApp.setCountProperties(atomicInteger);
+                                serviceApp.setRootUsers(persistence.readUsers(atomicInteger1));
+                                serviceApp.setCountUsers(atomicInteger1);
+                            } catch (SAXException e) {
+                                e.printStackTrace();
+                            }
+//                            persistence.writeProperty(serviceApp.getNodeRootProperties(), nameHorizontalProperty);
                             break;
                         case REGISTER_USER:
                             String nameUser = connection.readUTF();
@@ -93,43 +105,45 @@ public class ServerApp {
                             connection.writeUTF(REGISTER_USER);
                             connection.writeBoolean(isAddSucces);
                             connection.writeUTF(nameUser);
-                            connection.writeInt(serviceApp.getCountUsers() - 1);
+                            connection.writeInt(serviceApp.getCountUsers());
+//                            persistence.writeUsers(serviceApp.getNodeRootUsers(),"Ciudadela");
                             break;
                         case NEW_HOUSE:
                             connection.writeUTF(NEW_HOUSE);
-                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.addHouse();
+                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.printTreeProperties();
-                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
+//                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
                             break;
                         case NEW_BUILDING:
                             connection.writeUTF(NEW_BUILDING);
-                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.addBuilding();
+                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.printTreeProperties();
-                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
+//                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
                             break;
                         case NEW_APARTMENT:
                             connection.writeUTF(NEW_APARTMENT);
-                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.addApartment(connection.readInt());
+                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.printTreeProperties();
-                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
+//                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
                             break;
                         case SHOW_PROPERTIES:
-
+                            connection.writeUTF(SHOW_PROPERTIES);
+                            connection.sendFile(serviceApp.writePropertyInMemory());
                             break;
                         case ADD_HOUSE_USER:
                             connection.writeUTF(ADD_HOUSE_USER);
-                            connection.writeInt(serviceApp.getCountProperties());
                             int idFather = connection.readInt();
                             serviceApp.addPropertyToUser(idFather, new PropertyNodeUser(serviceApp.getCountProperties(), "House"));
+                            connection.writeInt(serviceApp.getCountProperties());
                             break;
                         case ADD_APARTMENT_USER:
                             connection.writeUTF(ADD_APARTMENT_USER);
-                            connection.writeInt(serviceApp.getCountProperties() - 1);
                             int idFatherApartment = connection.readInt();
-                            serviceApp.addPropertyToUser(idFatherApartment, new PropertyNodeUser(serviceApp.getCountProperties() - 1, "Apartment"));
+                            serviceApp.addPropertyToUser(idFatherApartment, new PropertyNodeUser(serviceApp.getCountProperties(), "Apartment"));
+                            connection.writeInt(serviceApp.getCountProperties());
                             break;
                         case "SET_PROPERTY_TO_USER":
                             int idUser = connection.readInt();
@@ -138,24 +152,24 @@ public class ServerApp {
                             break;
                         case NEW_POOL:
                             connection.writeUTF(NEW_POOL);
-                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.addPool();
+                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.printTreeProperties();
-                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
+//                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
                             break;
                         case NEW_FIELD:
                             connection.writeUTF(NEW_FIELD);
-                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.addNewField();
+                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.printTreeProperties();
-                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
+//                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
                             break;
                         case NEW_ADD_COMMON_ROOM:
                             connection.writeUTF(NEW_ADD_COMMON_ROOM);
-                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.addNewCommonRoom();
+                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.printTreeProperties();
-                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
+//                            persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
                             break;
                         case "DELETE_PROPERTY":
                             int idPropertyToDelete = connection.readInt();
@@ -181,47 +195,57 @@ public class ServerApp {
                             boolean isExistUser = serviceApp.checkIsExitsUser(nameUser);
                             connection.writeUTF("NEW_CLIENT");
                             connection.writeBoolean(isExistUser);
-                            ByteArrayOutputStream xmlToUser = serviceApp.createXmlToUser(nameUser);
+                            connection.writeUTF(nameUser);
+                            if (isExistUser) {
+                                ByteArrayOutputStream xmlToUser = serviceApp.createXmlToUser(nameUser);
+                                connection.sendFile(xmlToUser);
+                            }
+                            break;
+                        case "REFRESH_PROPERTIES_USER":
+                            connection.writeUTF("REFRESH_PROPERTIES_USER");
+                            ByteArrayOutputStream xmlToUser = serviceApp.createXmlToUser(connection.readUTF());
                             connection.sendFile(xmlToUser);
                             break;
+
                         case "ADD_SERVICE_WATER":
                             connection.writeUTF("ADD_SERVICE_WATER");
-                            connection.writeInt(serviceApp.getCountProperties());
                             idProperty = connection.readInt();
                             serviceApp.addWaterServiceToProperty(idProperty);
+                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.printTreeProperties();
                             break;
 
                         case "ADD_SERVICE_ELECTRICITY":
                             connection.writeUTF("ADD_SERVICE_ELECTRICITY");
-                            connection.writeInt(serviceApp.getCountProperties());
                             idProperty = connection.readInt();
                             serviceApp.addElectricityServiceToProperty(idProperty);
+                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.printTreeProperties();
                             break;
 
                         case "ADD_SERVICE_GAS":
                             connection.writeUTF("ADD_SERVICE_GAS");
-                            connection.writeInt(serviceApp.getCountProperties());
                             idProperty = connection.readInt();
                             serviceApp.addGasServiceToProperty(idProperty);
+                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.printTreeProperties();
                             break;
 
                         case "ADD_SERVICE_INTERNET":
                             connection.writeUTF("ADD_SERVICE_INTERNET");
-                            connection.writeInt(serviceApp.getCountProperties());
                             idProperty = connection.readInt();
                             serviceApp.addInternetServiceToProperty(idProperty);
+                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.printTreeProperties();
                             break;
                         case "ADD_NEW_BILL":
                             connection.writeUTF("ADD_NEW_BILL");
-                            connection.writeInt(serviceApp.getCountProperties());
                             String[] data = connection.readUTF().split("#");
                             serviceApp.addWrapperService(data);
+                            connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.printTreeProperties();
                             break;
+
 
                     }
                 }

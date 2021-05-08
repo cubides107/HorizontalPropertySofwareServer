@@ -103,6 +103,10 @@ public class NodeUser {
 
     @Override
     public String toString() {
-        return "{ User: " + "id=" + id + "-" +"data Id: " + data.getId() +"}";
+        return "{ User: " + data.getName() + "id=" + id + "-" +"data Id: " + data.getId() +"}";
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

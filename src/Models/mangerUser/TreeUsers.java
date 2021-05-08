@@ -42,9 +42,6 @@ public class TreeUsers {
         return search(id, root);
     }
 
-
-
-
     private NodeUser search(int id, NodeUser actual) {
         if(actual.getId() == id){
            return actual;

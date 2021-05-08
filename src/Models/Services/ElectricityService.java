@@ -9,6 +9,9 @@ public class ElectricityService implements IDataNodeProperties {
         this.ID = ID;
     }
 
+    public ElectricityService() {
+    }
+
     @Override
     public int getID() {
         return ID;

@@ -16,7 +16,7 @@ public class Apartment implements IDataNodeProperties{
     }
 
     @Override
-    public void setId(int id) {
+    public void setId(int ID) {
         this.ID = ID;
     }
 

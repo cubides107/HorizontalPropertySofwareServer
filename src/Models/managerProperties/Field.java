@@ -8,13 +8,16 @@ public class Field implements IDataNodeProperties{
         this.ID = ID;
     }
 
+    public Field() {
+    }
+
     @Override
     public int getID() {
        return ID;
     }
 
     @Override
-    public void setId(int id) {
-
+    public void setId(int ID) {
+        this.ID = ID;
     }
 }

@@ -16,17 +16,11 @@ public class NodeProperties {
         childList = new ArrayList<>();
     }
 
-    public NodeProperties(int id) {
-        this.id = id;
-    }
-
     public NodeProperties(IDataNodeProperties data) {
         this.data = data;
+        childList = new ArrayList<>();
     }
 
-    public NodeProperties() {
-
-    }
 
     public void setId(int id) {
         this.id = id;

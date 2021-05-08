@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<HorizontalProperty>
-    <Propiedades>
-        <HorizontalPropertyNode>
-            <Name>Ciudadela</Name>
-            <ID>0</ID>
-            <Property>
-                <House>
-                    <ID>1</ID>
-                </House>
-            </Property>
-            <Property>
-                <House>
-                    <ID>2</ID>
-                </House>
-            </Property>
-        </HorizontalPropertyNode>
-    </Propiedades>
-</HorizontalProperty>
+<Ciudadela>
+    <House>
+        <ID>1</ID>
+    </House>
+    <House>
+        <ID>2</ID>
+    </House>
+    <CommonRoom>
+        <ID>3</ID>
+    </CommonRoom>
+    <Building>
+        <ID>4</ID>
+        <Apartment>
+            <ID>5</ID>
+        </Apartment>
+    </Building>
+    <Pool>
+        <ID>6</ID>
+    </Pool>
+    <Field>
+        <ID>7</ID>
+    </Field>
+    <Building>
+        <ID>8</ID>
+        <Apartment>
+            <ID>9</ID>
+        </Apartment>
+    </Building>
+</Ciudadela>

@@ -7,6 +7,9 @@ public class Client implements IDataNode {
         this.nameUser = nameUser;
     }
 
+    public Client() {
+    }
+
     @Override
     public String getName() {
        return nameUser;
@@ -15,6 +18,11 @@ public class Client implements IDataNode {
     @Override
     public int getId() {
         return 0;
+    }
+
+    @Override
+    public void setId(int id) {
+
     }
 
     public String getNameUser() {
