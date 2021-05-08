@@ -17,6 +17,14 @@ public class WrapperService implements IDataNodeProperties {
     public WrapperService() {
     }
 
+    public double getValue() {
+        return value;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
     @Override
     public int getID() {
         return 0;

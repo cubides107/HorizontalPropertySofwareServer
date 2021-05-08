@@ -5,9 +5,20 @@ import Models.mangerUser.Client;
 import Models.mangerUser.NodeUser;
 import Models.mangerUser.PropertyNodeUser;
 import Models.persistence.Persistence;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -102,20 +113,39 @@ public class ServiceApp {
         NodeUser nodeUser = horizontalProperty.searchByNameUser(nameUser);
         ArrayList<NodeUser> childList = nodeUser.getChildList();
         ArrayList<NodeProperties> listPropertiesToUser = new ArrayList<>();
-        for (NodeUser node:childList) {
+        for (NodeUser node : childList) {
             listPropertiesToUser.add(horizontalProperty.searchPropertyToUser(node.getData().getId()));
         }
-        return persistence.writeXmlToUser(nodeUser,listPropertiesToUser);
+        return persistence.writeXmlToUser(nodeUser, listPropertiesToUser);
     }
 
-    public void  createUsersBYXml(){
+    public ByteArrayOutputStream createUsersBYXml(String name) throws ParserConfigurationException, TransformerException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        DOMImplementation implementation = builder.getDOMImplementation();
+        Document document = implementation.createDocument(null, name, null);
+        document.setXmlVersion("1.0");
+        Element rootXml = document.getDocumentElement();
         NodeUser nodeRootUsers = horizontalProperty.getNodeRootUsers();
         ArrayList<NodeUser> childList = nodeRootUsers.getChildList();
-        ArrayList<NodeProperties> listPropertiesToUser = new ArrayList<>();
-        for (NodeUser node:childList) {
-            listPropertiesToUser.add(horizontalProperty.searchPropertyToUser(node.getData().getId()));
+        for (NodeUser node : childList) {
+            Element user = document.createElement(node.getData().getName());
+            Element idProperty = document.createElement("ID");
+            Text textIdent = document.createTextNode(String.valueOf(node.getId()));
+            idProperty.appendChild(textIdent);
+            user.appendChild(idProperty);
+            for (NodeUser nodeProperties : node.getChildList()) {
+                persistence.writeProperty(horizontalProperty.searchPropertyToUser(nodeProperties.getData().getId()), user, document);
+            }
+            if (user != null) {
+                rootXml.appendChild(user);
+            }
         }
-
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        transformer.transform(new DOMSource(document), new StreamResult(out));
+        return out;
     }
 
 
@@ -144,7 +174,7 @@ public class ServiceApp {
     }
 
     public ByteArrayOutputStream writePropertyInMemory() throws ParserConfigurationException, TransformerException {
-       return persistence.writePropertyInMemory(horizontalProperty.getNodeRootProperties(), horizontalProperty.getName());
+        return persistence.writePropertyInMemory(horizontalProperty.getNodeRootProperties(), horizontalProperty.getName());
     }
 
     public void setCountProperties(AtomicInteger atomicInteger) {

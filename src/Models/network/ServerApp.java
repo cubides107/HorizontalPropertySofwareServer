@@ -108,6 +108,11 @@ public class ServerApp {
                             connection.writeInt(serviceApp.getCountUsers());
 //                            persistence.writeUsers(serviceApp.getNodeRootUsers(),"Ciudadela");
                             break;
+                        case "SHOW_USERS_PANEL":
+                            connection.writeUTF("SHOW_USERS_PANEL");
+                            ByteArrayOutputStream usersBYXml = serviceApp.createUsersBYXml(serviceApp.getHorizontalProperty());
+                            connection.sendFile(usersBYXml);
+                            break;
                         case NEW_HOUSE:
                             connection.writeUTF(NEW_HOUSE);
                             serviceApp.addHouse();
