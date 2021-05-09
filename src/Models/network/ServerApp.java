@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -249,6 +250,11 @@ public class ServerApp {
                             serviceApp.addWrapperService(data);
                             connection.writeInt(serviceApp.getCountProperties());
                             serviceApp.printTreeProperties();
+                            break;
+                        case "REPORT1":
+                            nameUser = connection.readUTF();
+                            LocalDate date = serviceApp.convertDate(connection.readUTF());
+                            serviceApp.calculateAllService(date, nameUser);
                             break;
 
 
