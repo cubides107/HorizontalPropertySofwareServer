@@ -2,8 +2,10 @@ package Models.network;
 
 import Models.mangerUser.Client;
 import Models.ServiceApp;
+import Models.mangerUser.NodeUser;
 import Models.mangerUser.PropertyNodeUser;
 import Models.persistence.Persistence;
+import com.itextpdf.text.DocumentException;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -45,6 +47,7 @@ public class ServerApp {
         serverSocket = new ServerSocket(PORT);
         listConnections = new ArrayList<>();
         persistence = new Persistence();
+        serviceApp.setRootUsers(new NodeUser(0, new Client(Persistence.getNameHorizontalPropertyToFile())));
         acceptConnections();
         readRequests();
     }
@@ -86,7 +89,7 @@ public class ServerApp {
                     switch (request) {
                         case CREATE_HORIZONTAL_PROPERTY:
                             String nameHorizontalProperty = connection.readUTF();
-                            serviceApp.setNameHorizontalProperty(nameHorizontalProperty);
+//                            serviceApp.setNameHorizontalProperty(nameHorizontalProperty);
 //                            persistence.saveUsersXml( nameHorizontalProperty.replace(" ", ""));
                             AtomicInteger atomicInteger = new AtomicInteger();
                             AtomicInteger atomicInteger1 = new AtomicInteger();
@@ -98,6 +101,8 @@ public class ServerApp {
                             } catch (SAXException e) {
                                 e.printStackTrace();
                             }
+                            serviceApp.printTreeUsers();
+                            serviceApp.printTreeProperties();
 //                            persistence.writeProperty(serviceApp.getNodeRootProperties(), nameHorizontalProperty);
                             break;
                         case REGISTER_USER:
@@ -107,7 +112,7 @@ public class ServerApp {
                             connection.writeBoolean(isAddSucces);
                             connection.writeUTF(nameUser);
                             connection.writeInt(serviceApp.getCountUsers());
-//                            persistence.writeUsers(serviceApp.getNodeRootUsers(),"Ciudadela");
+
                             break;
                         case "SHOW_USERS_PANEL":
                             connection.writeUTF("SHOW_USERS_PANEL");
@@ -254,13 +259,22 @@ public class ServerApp {
                         case "REPORT1":
                             nameUser = connection.readUTF();
                             LocalDate date = serviceApp.convertDate(connection.readUTF());
-                            serviceApp.calculateAllService(date, nameUser);
+                            ByteArrayOutputStream byteArrayOutputStream = serviceApp.calculateAllService(date, nameUser);
+                            connection.writeUTF("REPORT1");
+                            connection.sendFile(byteArrayOutputStream);
+                            break;
+                        case "REPORT2":
+                            connection.writeUTF("REPORT2");
+                            connection.sendFileWithPath("data/HorizontalPropertyUsers.xml");
+                            serviceApp.calculateNodesToReport3(LocalDate.of(2019,01,01),LocalDate.of(2021,01,01));
                             break;
 
-
                     }
+
+                    persistence.writeUsers(serviceApp.getNodeRootUsers(), serviceApp.getHorizontalProperty());
+                    persistence.writeProperty(serviceApp.getNodeRootProperties(), serviceApp.getHorizontalProperty());
                 }
-            } catch (IOException | ParserConfigurationException | TransformerException e) {
+            } catch (IOException | ParserConfigurationException | TransformerException | DocumentException e) {
                 e.printStackTrace();
             }
         }

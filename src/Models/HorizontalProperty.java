@@ -6,6 +6,7 @@ import Models.mangerUser.Client;
 import Models.mangerUser.NodeUser;
 import Models.mangerUser.PropertyNodeUser;
 import Models.mangerUser.TreeUsers;
+import Models.persistence.Persistence;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -27,13 +28,15 @@ public class HorizontalProperty {
     }
 
     public boolean addUser(Client user) {
-        boolean isExistUser = treeUsers.checkExistUser(user.getNameUser());
-        if (!isExistUser) {
-            treeUsers.add(0, new NodeUser(++countUsers, user));
+//        if(treeUsers.getRoot() != null) {
+            boolean isExistUser = treeUsers.checkExistUser(user.getNameUser());
+            if (!isExistUser) {
+                treeUsers.add(0, new NodeUser(++countUsers, user));
 //            treeUsers.printBreadth();
-            return true;
-        }
-        treeUsers.printBreadth();
+                return true;
+            }
+            treeUsers.printBreadth();
+//        }
         return false;
     }
 
@@ -86,7 +89,11 @@ public class HorizontalProperty {
     }
 
     public String getName() {
+        if(name == null){
+            return Persistence.getNameHorizontalPropertyToFile();
+        }else{
         return name;
+        }
     }
 
     public int getCountProperties() {

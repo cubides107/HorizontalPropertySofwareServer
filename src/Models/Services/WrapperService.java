@@ -21,6 +21,15 @@ public class WrapperService implements IDataNodeProperties {
         return value;
     }
 
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
+    }
+
     public LocalDate getDate() {
         return date;
     }

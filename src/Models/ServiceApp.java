@@ -56,7 +56,12 @@ public class ServiceApp {
     }
 
     public String getHorizontalProperty() {
-        return horizontalProperty.getName();
+        if (horizontalProperty.getName() == null) {
+//            persistence.
+            return Persistence.getNameHorizontalPropertyToFile();
+        } else {
+            return horizontalProperty.getName();
+        }
     }
 
     public NodeProperties getNodeRootProperties() {
@@ -145,20 +150,23 @@ public class ServiceApp {
         document.setXmlVersion("1.0");
         Element rootXml = document.getDocumentElement();
         NodeUser nodeRootUsers = horizontalProperty.getNodeRootUsers();
-        ArrayList<NodeUser> childList = nodeRootUsers.getChildList();
-        for (NodeUser node : childList) {
-            Element user = document.createElement(node.getData().getName());
-            Element idProperty = document.createElement("ID");
-            Text textIdent = document.createTextNode(String.valueOf(node.getId()));
-            idProperty.appendChild(textIdent);
-            user.appendChild(idProperty);
-            for (NodeUser nodeProperties : node.getChildList()) {
-                persistence.writeProperty(horizontalProperty.searchPropertyToUser(nodeProperties.getData().getId()), user, document);
-            }
-            if (user != null) {
-                rootXml.appendChild(user);
+        if (nodeRootUsers != null) {
+            ArrayList<NodeUser> childList = nodeRootUsers.getChildList();
+            for (NodeUser node : childList) {
+                Element user = document.createElement(node.getData().getName());
+                Element idProperty = document.createElement("ID");
+                Text textIdent = document.createTextNode(String.valueOf(node.getId()));
+                idProperty.appendChild(textIdent);
+                user.appendChild(idProperty);
+                for (NodeUser nodeProperties : node.getChildList()) {
+                    persistence.writeProperty(horizontalProperty.searchPropertyToUser(nodeProperties.getData().getId()), user, document);
+                }
+                if (user != null) {
+                    rootXml.appendChild(user);
+                }
             }
         }
+
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -167,10 +175,12 @@ public class ServiceApp {
     }
 
 
-    public void createPDF(int[] valuesService) throws FileNotFoundException, DocumentException {
+    public ByteArrayOutputStream createPDF(int[] valuesService) throws FileNotFoundException, DocumentException {
         com.itextpdf.text.Document document = new com.itextpdf.text.Document();
-        FileOutputStream pdfReport = new FileOutputStream("fichero.pdf");
-        PdfWriter writer = PdfWriter.getInstance(document, pdfReport);
+//        FileOutputStream pdfReport = new FileOutputStream("fichero.pdf");
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PdfWriter writer = PdfWriter.getInstance(document, out);
+
         document.open();
         PdfPTable table = new PdfPTable(2);
         String[] services = new String[4];
@@ -206,6 +216,7 @@ public class ServiceApp {
         graphics2d.dispose();
         contentByte.addTemplate(template, 150, 350);
         document.close();
+        return out;
     }
 
     public int calculateTotalServices(int[] values) {
@@ -217,7 +228,7 @@ public class ServiceApp {
     }
 
 
-    public void calculateAllService(LocalDate date, String nameUser) {
+    public ByteArrayOutputStream calculateAllService(LocalDate date, String nameUser) throws DocumentException, FileNotFoundException {
         int[] valuesService = new int[4];
         NodeUser nodeUser = horizontalProperty.searchByNameUser(nameUser);
         ArrayList<NodeUser> childList = nodeUser.getChildList();
@@ -225,11 +236,8 @@ public class ServiceApp {
         valuesService[1] = calculateOneRegister(date, childList, "ElectricityService");
         valuesService[2] = calculateOneRegister(date, childList, "InternetService");
         valuesService[3] = calculateOneRegister(date, childList, "WaterService");
-        try {
-            createPDF(valuesService);
-        } catch (FileNotFoundException | DocumentException e) {
-            e.printStackTrace();
-        }
+        return createPDF(valuesService);
+
     }
 
 
@@ -260,6 +268,30 @@ public class ServiceApp {
         }
         return null;
     }
+
+    public void calculateNodesToReport3(LocalDate dateOne, LocalDate dateTwo) {
+        NodeProperties nodeRootProperties = horizontalProperty.getNodeRootProperties();
+        ArrayList<Integer> idNodes = new ArrayList<>();
+        calculateNodes(nodeRootProperties,dateOne,dateTwo,idNodes);
+        for (Integer idNode : idNodes) {
+            System.out.println("Nodos a pintar" + idNode);
+        }
+    }
+
+    private void calculateNodes(NodeProperties actual,LocalDate dateStart, LocalDate dateEnd,ArrayList<Integer> idNodes) {
+        if(actual.getData().getClass().getSimpleName().equals("WrapperService")){
+            WrapperService data = (WrapperService) actual.getData();
+            if(data.getDate().isAfter(dateStart) && data.getDate().isBefore(dateEnd)){
+                idNodes.add(actual.getFather().getFather().getId());
+                idNodes.add(actual.getFather().getId());
+                idNodes.add(actual.getId());
+            }
+        }
+        for (NodeProperties node : actual.getChildList() ) {
+            calculateNodes(node,dateStart,dateEnd,idNodes);
+        }
+    }
+
 
     public LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
         return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

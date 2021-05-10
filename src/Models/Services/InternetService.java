@@ -11,6 +11,10 @@ public class InternetService implements IDataNodeProperties {
         this.ID = ID;
     }
 
+    public InternetService() {
+
+    }
+
     @Override
     public int getID() {
         return ID;

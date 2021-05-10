@@ -10,6 +10,10 @@ public class WaterService implements IDataNodeProperties {
         this.ID = ID;
     }
 
+    public WaterService() {
+
+    }
+
     @Override
     public int getID() {
         return ID;

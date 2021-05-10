@@ -9,6 +9,10 @@ public class GasService implements IDataNodeProperties {
         this.ID = ID;
     }
 
+    public GasService() {
+
+    }
+
 
     @Override
     public int getID() {

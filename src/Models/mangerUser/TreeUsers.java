@@ -27,10 +27,12 @@ public class TreeUsers {
     }
 
     public boolean checkExistUser(String nameUser){
-        ArrayList<NodeUser> childListRoot = root.getChildList();
-        for (NodeUser node : childListRoot) {
-            if(node.getData().getName().equals(nameUser)){
-                return  true;
+        if(root != null) {
+            ArrayList<NodeUser> childListRoot = root.getChildList();
+            for (NodeUser node : childListRoot) {
+                if (node.getData().getName().equals(nameUser)) {
+                    return true;
+                }
             }
         }
         return false;

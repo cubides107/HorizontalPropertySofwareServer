@@ -1,30 +1,43 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<Ciudadela>
-    <House>
-        <ID>1</ID>
-    </House>
-    <House>
-        <ID>2</ID>
-    </House>
-    <CommonRoom>
-        <ID>3</ID>
-    </CommonRoom>
+<Comfaboy>
     <Building>
-        <ID>4</ID>
+        <ID>1</ID>
+        <Apartment>
+            <ID>2</ID>
+        </Apartment>
+        <Apartment>
+            <ID>3</ID>
+        </Apartment>
         <Apartment>
             <ID>5</ID>
         </Apartment>
     </Building>
-    <Pool>
-        <ID>6</ID>
-    </Pool>
-    <Field>
-        <ID>7</ID>
-    </Field>
-    <Building>
-        <ID>8</ID>
-        <Apartment>
-            <ID>9</ID>
-        </Apartment>
-    </Building>
-</Ciudadela>
+    <House>
+        <ID>4</ID>
+        <ElectricityService>
+            <ID>6</ID>
+            <WrapperService>
+                <Date>2021-05-05</Date>
+                <Value>34545.0</Value>
+            </WrapperService>
+            <WrapperService>
+                <Date>2021-05-13</Date>
+                <Value>5.6456456E7</Value>
+            </WrapperService>
+        </ElectricityService>
+    </House>
+    <House>
+        <ID>11</ID>
+        <InternetService>
+            <ID>12</ID>
+            <WrapperService>
+                <Date>2020-05-20</Date>
+                <Value>6789.0</Value>
+            </WrapperService>
+            <WrapperService>
+                <Date>2020-05-19</Date>
+                <Value>5656.0</Value>
+            </WrapperService>
+        </InternetService>
+    </House>
+</Comfaboy>

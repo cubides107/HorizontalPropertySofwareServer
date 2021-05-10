@@ -50,6 +50,34 @@ public class Connection {
         }
     }
 
+    public void sendFileWithPath(String pathFile) {
+        try {
+            File file = new File(pathFile);
+            int sizeFile = (int) file.length();
+            outputChanel.writeUTF(file.getName());
+            outputChanel.writeInt(sizeFile);
+
+//            System.out.println("Enviando Archivo" + file.getName());
+
+            BufferedInputStream bufferedInput = new BufferedInputStream(new FileInputStream(file));
+            BufferedOutputStream bufferedOutput = new BufferedOutputStream(outputChanel);
+
+//            byte[] bytes = output.toByteArray();
+            byte[] bytesFile = new byte[sizeFile];
+            bufferedInput.read(bytesFile);
+
+            for (int i = 0; i < bytesFile.length; i++) {
+                bufferedOutput.write(bytesFile[i]);
+            }
+            bufferedInput.close();
+            bufferedOutput.flush();
+            System.out.println("Archivo Enviado");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public synchronized void writeUTF(String message) {
         try {
             outputChanel.writeUTF(message);
@@ -76,7 +104,7 @@ public class Connection {
         return message;
     }
 
-    public void writeBoolean(boolean value){
+    public void writeBoolean(boolean value) {
         try {
             outputChanel.writeBoolean(value);
         } catch (IOException e) {
@@ -88,15 +116,16 @@ public class Connection {
         return inputChanel.available() > 0;
     }
 
-    public int readInt(){
+    public int readInt() {
         int intAux = 0;
         try {
-           intAux = inputChanel.readInt();
+            intAux = inputChanel.readInt();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return intAux;
     }
+
     public byte[] readImageUser() throws IOException {
 
         int sizeFile = inputChanel.readInt();
@@ -109,7 +138,7 @@ public class Connection {
         return buffer;
     }
 
-    public void writeInt(int number){
+    public void writeInt(int number) {
         try {
             outputChanel.writeInt(number);
         } catch (IOException e) {
