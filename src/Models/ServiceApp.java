@@ -33,7 +33,6 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -159,7 +158,7 @@ public class ServiceApp {
                 idProperty.appendChild(textIdent);
                 user.appendChild(idProperty);
                 for (NodeUser nodeProperties : node.getChildList()) {
-                    persistence.writeProperty(horizontalProperty.searchPropertyToUser(nodeProperties.getData().getId()), user, document);
+                    persistence.writePropertyUserInMemory(horizontalProperty.searchPropertyToUser(nodeProperties.getData().getId()), user, document);
                 }
                 if (user != null) {
                     rootXml.appendChild(user);
@@ -269,19 +268,20 @@ public class ServiceApp {
         return null;
     }
 
-    public void calculateNodesToReport3(LocalDate dateOne, LocalDate dateTwo) {
+    public ArrayList<Integer> calculateNodesToReport3(LocalDate dateOne, LocalDate dateTwo) {
         NodeProperties nodeRootProperties = horizontalProperty.getNodeRootProperties();
         ArrayList<Integer> idNodes = new ArrayList<>();
         calculateNodes(nodeRootProperties,dateOne,dateTwo,idNodes);
-        for (Integer idNode : idNodes) {
-            System.out.println("Nodos a pintar" + idNode);
-        }
+        return idNodes;
     }
 
     private void calculateNodes(NodeProperties actual,LocalDate dateStart, LocalDate dateEnd,ArrayList<Integer> idNodes) {
         if(actual.getData().getClass().getSimpleName().equals("WrapperService")){
             WrapperService data = (WrapperService) actual.getData();
-            if(data.getDate().isAfter(dateStart) && data.getDate().isBefore(dateEnd)){
+            if(data.getDate().isAfter(dateStart) && data.getDate().isBefore(dateEnd) || (data.getDate().isEqual(dateStart) || data.getDate().isEqual(dateEnd))){
+              if(actual.getFather().getFather().getFather().getData().getClass().getSimpleName().equals("Building")){
+                  idNodes.add(actual.getFather().getFather().getFather().getId());
+              }
                 idNodes.add(actual.getFather().getFather().getId());
                 idNodes.add(actual.getFather().getId());
                 idNodes.add(actual.getId());
@@ -345,5 +345,13 @@ public class ServiceApp {
 
     public void setCountUsers(AtomicInteger atomicInteger1) {
         horizontalProperty.setCountUsers(atomicInteger1);
+    }
+
+    public void setNameToUser(int idUser, String emailUser) {
+        horizontalProperty.setNameToUser(idUser,emailUser);
+    }
+
+    public void deleteInTreeUser(int idUser) {
+      horizontalProperty.deleteProperty(idUser);
     }
 }

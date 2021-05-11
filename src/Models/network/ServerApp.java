@@ -212,6 +212,16 @@ public class ServerApp {
                                 connection.sendFile(xmlToUser);
                             }
                             break;
+                        case "EDIT_USER":
+                            idUser = connection.readInt();
+                            String emailUser = connection.readUTF();
+                            serviceApp.setNameToUser(idUser, emailUser);
+                            break;
+
+                        case "DELETE":
+                            idUser = connection.readInt();
+                            serviceApp.deleteInTreeUser(idUser);
+                            break;
                         case "REFRESH_PROPERTIES_USER":
                             connection.writeUTF("REFRESH_PROPERTIES_USER");
                             ByteArrayOutputStream xmlToUser = serviceApp.createXmlToUser(connection.readUTF());
@@ -266,7 +276,16 @@ public class ServerApp {
                         case "REPORT2":
                             connection.writeUTF("REPORT2");
                             connection.sendFileWithPath("data/HorizontalPropertyUsers.xml");
-                            serviceApp.calculateNodesToReport3(LocalDate.of(2019,01,01),LocalDate.of(2021,01,01));
+                            break;
+                        case "REPORT3":
+                            String[] dates = connection.readUTF().split("#");
+                            ArrayList<Integer> integers = serviceApp.calculateNodesToReport3(LocalDate.parse(dates[0]), LocalDate.parse(dates[1]));
+                            String idNodeAux = integers.toString();
+                            String replaceAux = idNodeAux.replace("[", "");
+                            replaceAux = replaceAux.replace("]", "");
+                            replaceAux = replaceAux.replace(" ","");
+                            connection.writeUTF("REPORT3");
+                            connection.writeUTF(replaceAux);
                             break;
 
                     }

@@ -3,7 +3,25 @@
     <Julian>
         <ID>0</ID>
         <House>
-            <ID>11</ID>
+            <ID>15</ID>
+        </House>
+        <Apartment>
+            <ID>6</ID>
+        </Apartment>
+        <Apartment>
+            <ID>16</ID>
+        </Apartment>
+        <Apartment>
+            <ID>17</ID>
+        </Apartment>
+        <House>
+            <ID>14</ID>
         </House>
     </Julian>
+    <Alva>
+        <ID>0</ID>
+        <House>
+            <ID>14</ID>
+        </House>
+    </Alva>
 </Comfaboy>

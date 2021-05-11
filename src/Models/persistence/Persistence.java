@@ -27,38 +27,6 @@ public class Persistence {
 
     }
 
-    public void saveUsersXml(String nameFile) {
-        try {
-
-            File fileProperties = new File("data/" + nameFile);
-
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            DOMImplementation implementation = builder.getDOMImplementation();
-            Document document = implementation.createDocument(null, nameFile, null);
-            document.setXmlVersion("1.0");
-
-            Element root = document.getDocumentElement();
-
-            Element user = document.createElement("Usuarios");
-            Element emailUser = document.createElement("Email");
-            Text textEmailUser = document.createTextNode("cristianCubides");
-            emailUser.appendChild(textEmailUser);
-            user.appendChild(emailUser);
-
-            root.appendChild(user);
-
-            Source source = new DOMSource(document);
-            Result result = new StreamResult(new File("data/" + nameFile + ".xml"));
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.transform(source, result);
-
-        } catch (ParserConfigurationException | TransformerException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     public NodeProperties readXml(AtomicInteger countProperties) throws ParserConfigurationException, IOException, SAXException {
         Document document = convertXMLFileToXMLDocument("data/" + "HorizontalProperty" + ".xml");
@@ -66,7 +34,6 @@ public class Persistence {
 //        NodeList horizontalPropertyNode = rootNodeElement.getElementsByTagName("HorizontalPropertyNode");
 //        Node item = horizontalPropertyNode.item(0);
         NodeProperties nodeProperties = readXml(rootNodeElement, countProperties);
-        System.out.println(countProperties);
         return nodeProperties;
     }
 
@@ -139,7 +106,7 @@ public class Persistence {
                 node = new NodeProperties(new GasService());
 //                node.setId(countProperties.incrementAndGet());
                 break;
-            case "WaterSerrvice":
+            case "WaterService":
                 node = new NodeProperties(new WaterService());
 //                node.setId(countProperties.incrementAndGet());
                 break;
@@ -222,7 +189,7 @@ public class Persistence {
 //            property.appendChild(idProperty);
 
         for (NodeProperties node : listPropertiesToUser) {
-            writeProperty(node, rootXML, document);
+            writePropertyUserInMemory(node, rootXML, document);
         }
 //            rootXML.appendChild(property);
 
@@ -233,6 +200,22 @@ public class Persistence {
     }
 
 
+    public static int calculateNumberCount(String name){
+        Document document = convertXMLFileToXMLDocument(name);
+        NodeList nodeList = document.getElementsByTagName("ID");
+        int numberMax = 0;
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node item = nodeList.item(i);
+            int number = Integer.parseInt(item.getTextContent());
+            if(number > numberMax){
+                numberMax = number;
+            }
+        }
+        return numberMax;
+    }
+
+
+
     public void writeProperty(NodeProperties root, String name) throws ParserConfigurationException, TransformerException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -240,7 +223,6 @@ public class Persistence {
         Document document = implementation.createDocument(null, name, null);
         document.setXmlVersion("1.0");
         Element rootXml = document.getDocumentElement();
-        System.out.println(rootXml.getTagName());
         writeProperty(root, rootXml, document);
 
         Source source = new DOMSource(document);
@@ -259,6 +241,11 @@ public class Persistence {
                 property = document.createElement(actual.getData().getClass().getSimpleName());
                 if (actual.getData().getClass().getSimpleName().equals("WrapperService")) {
                     WrapperService aClass = (WrapperService) actual.getData();
+                    Element idPropertyAux = document.createElement("ID");
+//                    Text textIdent = document.createTextNode(String.valueOf(actual.getData().getID()));
+                    Text id = document.createTextNode(String.valueOf(actual.getId()));
+                    idPropertyAux.appendChild(id);
+                    property.appendChild(idPropertyAux);
                     Element date = document.createElement("Date");
                     Text textIdent = document.createTextNode(String.valueOf(aClass.getDate()));
                     date.appendChild(textIdent);
@@ -272,7 +259,6 @@ public class Persistence {
                 }
 
                     Element idProperty = document.createElement("ID");
-//                    Text textIdent = document.createTextNode(String.valueOf(actual.getData().getID()));
                     Text textIdent = document.createTextNode(String.valueOf(actual.getId()));
 
                     idProperty.appendChild(textIdent);
@@ -286,6 +272,50 @@ public class Persistence {
                     writeProperty(child, property, document);
                 } else {
                     writeProperty(child, actualRoot, document);
+                }
+            }
+        }
+    }
+
+    public void writePropertyUserInMemory(NodeProperties actual, Element actualRoot, Document document) {
+        Element property = null;
+        if (actual != null) {
+            if (!(actual.getData().getClass().getSimpleName().equals("HorizontalPropertyNode"))) {
+                property = document.createElement(actual.getData().getClass().getSimpleName());
+                if (actual.getData().getClass().getSimpleName().equals("WrapperService")) {
+                    WrapperService aClass = (WrapperService) actual.getData();
+                    Element idPropertyAux = document.createElement("ID");
+//                    Text textIdent = document.createTextNode(String.valueOf(actual.getData().getID()));
+                    Text id = document.createTextNode(String.valueOf(actual.getId()));
+                    idPropertyAux.appendChild(id);
+                    property.appendChild(idPropertyAux);
+                    Element date = document.createElement("Date");
+                    Text textIdent = document.createTextNode(String.valueOf(aClass.getDate()));
+                    date.appendChild(textIdent);
+                    property.appendChild(date);
+                    Element valueBill = document.createElement("Value");
+                    Text textValue = document.createTextNode(String.valueOf(aClass.getValue()));
+                    valueBill.appendChild(textValue);
+                    property.appendChild(valueBill);
+                    actualRoot.appendChild(property);
+                    return;
+                }
+
+                Element idProperty = document.createElement("ID");
+//                    Text textIdent = document.createTextNode(String.valueOf(actual.getData().getID()));
+                Text textIdent = document.createTextNode(String.valueOf(actual.getId()));
+
+                idProperty.appendChild(textIdent);
+                property.appendChild(idProperty);
+
+                actualRoot.appendChild(property);
+            }
+
+            for (NodeProperties child : actual.getChildList()) {
+                if (property != null) {
+                    writePropertyUserInMemory(child, property, document);
+                } else {
+                    writePropertyUserInMemory(child, actualRoot, document);
                 }
             }
         }
@@ -335,9 +365,7 @@ public class Persistence {
         Document document = convertXMLFileToXMLDocument("data/HorizontalPropertyUsers.xml");
         Node rootNodeElement = document.getDocumentElement();
 
-        NodeUser nodeUser = readUsers(rootNodeElement, countUsers);
-        System.out.println(countUsers);
-        return nodeUser;
+        return readUsers(rootNodeElement, countUsers);
     }
 
     private NodeUser readUsers(Node rootNodeElement, AtomicInteger countUsers) {
@@ -401,157 +429,17 @@ public class Persistence {
         if (!(actual.getData().getClass().getSimpleName().equals("HorizontalPropertyNode"))) {
             property = document.createElement(actual.getData().getClass().getSimpleName());
             Element idProperty = document.createElement("ID");
-            Text textIdent = document.createTextNode(String.valueOf(actual.getData().getID()));
+            Text textIdent = document.createTextNode(String.valueOf(actual.getId()));
             idProperty.appendChild(textIdent);
             property.appendChild(idProperty);
             rootXml.appendChild(property);
         }
         for (NodeProperties child : actual.getChildList()) {
             if (property != null) {
-                writeProperty(child, property, document);
+                writePropertyUserInMemory(child, property, document);
             } else {
-                writeProperty(child, rootXml, document);
+                writePropertyUserInMemory(child, rootXml, document);
             }
-        }
-    }
-
-
-//    public ByteArrayOutputStream writeUsersInMemory(NodeUser root, String name) throws ParserConfigurationException {
-//        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//        DocumentBuilder builder = factory.newDocumentBuilder();
-//        DOMImplementation implementation = builder.getDOMImplementation();
-//        Document document = implementation.createDocument(null, name, null);
-//        document.setXmlVersion("1.0");
-//        Element rootXml = document.getDocumentElement();
-//
-//        writeUsersInMemory(root,rootXml,document);
-//
-//
-//
-//    }
-
-    private void writeUsersInMemory(NodeUser root, Element rootXml, Document document) {
-
-    }
-
-    public void readProperty() throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document documento = builder.parse(new File("data/" + "HorizontalProperty" + ".xml"));
-        NodeList listProperty = documento.getElementsByTagName("Property");
-
-
-        for (int i = 0; i < listProperty.getLength(); i++) {
-            Node nodo = listProperty.item(i);
-            System.out.println(nodo.getNodeName());
-            Node firstChild = nodo.getChildNodes().item(i);
-            NodeList item = firstChild.getChildNodes();
-            for (int j = 0; j < item.getLength(); j++) {
-                Node nodeName = item.item(j);
-                if (nodeName.getNodeType() == Node.ELEMENT_NODE) {
-                    Element node = (Element) nodeName;
-                    NodeList childNodes = node.getChildNodes();
-                    for (int k = 0; k < childNodes.getLength(); k++) {
-                        Node item1 = childNodes.item(k);
-                        if (nodeName.getNodeType() == Node.ELEMENT_NODE) {
-                            System.out.println(" " + nodeName.getNodeName());
-                            System.out.println("  " + item1.getTextContent());
-                        }
-                    }
-                }
-
-            }
-//            System.out.println(firstChild.getNodeName());
-//            NodeList childNodes = firstChild.getChildNodes();
-//            String nodeValue = childNodes.item(1).getTextContent();
-//            System.out.println(nodeValue);
-//            if (nodo.getNodeType() == Node.ELEMENT_NODE) {
-//                Element element = (Element) nodo;
-//
-//                NodeList childProperties = element.getChildNodes();
-//                for (int j = 0; j < childProperties.getLength(); j++) {
-//                    Node property = childProperties.item(j);
-//                    if (property.getNodeType() == Node.ELEMENT_NODE) {
-//                        Element e = (Element) property;
-//                        System.out.println(e.getNodeName());
-////                        System.out.println(e.getTagName());
-//                        NodeList childNodes = e.getChildNodes();
-//                        for (int h = 0; i < childNodes.getLength(); i++) {
-//                            Node item = childNodes.item(h);
-//                        }
-//                    }
-//                }
-//            }
-        }
-
-
-    }
-
-//    public static void main(String[] args) {
-//        try {
-////            new Persistence().readXml();
-//        } catch (ParserConfigurationException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (SAXException e) {
-//            e.printStackTrace();
-//        }
-//        AtomicInteger atomicInteger = new AtomicInteger();
-//        new Persistence().readUsers(atomicInteger);
-//    }
-
-    public void writeProperties(NodeProperties treeProperties) throws ParserConfigurationException, TransformerException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        DOMImplementation implementation = builder.getDOMImplementation();
-        Document document = implementation.createDocument(null, "HorizontalProperty", null);
-        document.setXmlVersion("1.0");
-
-        Element root = document.getDocumentElement();
-
-        Element properties = document.createElement("Propiedad");
-
-        for (NodeProperties child : treeProperties.getChildList()) {
-            Element property = document.createElement(child.getData().getClass().getSimpleName());
-            Element idProperty = document.createElement("ID");
-            Text textIdent = document.createTextNode(String.valueOf(child.getData().getID()));
-            for (NodeProperties childNodes : child.getChildList()) {
-                String name = childNodes.getData().getClass().getSimpleName();
-            }
-        }
-
-        Element user = document.createElement("Usuarios");
-        Element emailUser = document.createElement("Email");
-        Text textEmailUser = document.createTextNode("cristianCubides");
-        emailUser.appendChild(textEmailUser);
-        user.appendChild(emailUser);
-
-        root.appendChild(user);
-
-        Source source = new DOMSource(document);
-        Result result = new StreamResult(new File("data/" + "HorizontalProperty" + ".xml"));
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.transform(source, result);
-    }
-
-    public void loadXml() {
-        try {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            Document document = documentBuilder.parse(new File("CiudadelaComfaboy.xml"));
-            Element root = (Element) document.getDocumentElement().getChildNodes();
-            Element email = document.createElement("Email");
-            Text text = document.createTextNode("cristianCubides");
-            email.appendChild(text);
-
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
         }
     }
 }

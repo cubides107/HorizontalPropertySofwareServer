@@ -25,6 +25,11 @@ public class Client implements IDataNode {
 
     }
 
+    @Override
+    public void setName(String email) {
+        nameUser = email;
+    }
+
     public String getNameUser() {
         return nameUser;
     }

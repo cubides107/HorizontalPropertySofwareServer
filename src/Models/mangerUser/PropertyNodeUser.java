@@ -24,4 +24,9 @@ public class PropertyNodeUser implements IDataNode{
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public void setName(String email) {
+
+    }
 }

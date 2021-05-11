@@ -3,40 +3,67 @@
     <Building>
         <ID>1</ID>
         <Apartment>
-            <ID>2</ID>
+            <ID>6</ID>
+            <ElectricityService>
+                <ID>26</ID>
+                <WrapperService>
+                    <ID>27</ID>
+                    <Date>2020-05-01</Date>
+                    <Value>2000.0</Value>
+                </WrapperService>
+            </ElectricityService>
         </Apartment>
         <Apartment>
-            <ID>3</ID>
-        </Apartment>
-        <Apartment>
-            <ID>5</ID>
+            <ID>16</ID>
         </Apartment>
     </Building>
+    <CommonRoom>
+        <ID>3</ID>
+    </CommonRoom>
+    <Building>
+        <ID>12</ID>
+        <Apartment>
+            <ID>17</ID>
+        </Apartment>
+    </Building>
+    <Building>
+        <ID>13</ID>
+    </Building>
     <House>
-        <ID>4</ID>
-        <ElectricityService>
-            <ID>6</ID>
-            <WrapperService>
-                <Date>2021-05-05</Date>
-                <Value>34545.0</Value>
-            </WrapperService>
-            <WrapperService>
-                <Date>2021-05-13</Date>
-                <Value>5.6456456E7</Value>
-            </WrapperService>
-        </ElectricityService>
+        <ID>14</ID>
     </House>
     <House>
-        <ID>11</ID>
-        <InternetService>
-            <ID>12</ID>
+        <ID>15</ID>
+        <ElectricityService>
+            <ID>18</ID>
             <WrapperService>
-                <Date>2020-05-20</Date>
-                <Value>6789.0</Value>
+                <ID>19</ID>
+                <Date>2020-07-01</Date>
+                <Value>78906.0</Value>
             </WrapperService>
+        </ElectricityService>
+        <WaterService>
+            <ID>20</ID>
             <WrapperService>
-                <Date>2020-05-19</Date>
-                <Value>5656.0</Value>
+                <ID>21</ID>
+                <Date>2021-06-01</Date>
+                <Value>6577.0</Value>
+            </WrapperService>
+        </WaterService>
+        <GasService>
+            <ID>22</ID>
+            <WrapperService>
+                <ID>24</ID>
+                <Date>2018-09-01</Date>
+                <Value>6575.0</Value>
+            </WrapperService>
+        </GasService>
+        <InternetService>
+            <ID>23</ID>
+            <WrapperService>
+                <ID>25</ID>
+                <Date>2020-05-01</Date>
+                <Value>5345345.0</Value>
             </WrapperService>
         </InternetService>
     </House>

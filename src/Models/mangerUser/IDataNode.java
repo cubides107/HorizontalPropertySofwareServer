@@ -5,4 +5,5 @@ public interface IDataNode {
     int getId();
 
     void setId(int nodeValue);
+    void setName(String email);
 }

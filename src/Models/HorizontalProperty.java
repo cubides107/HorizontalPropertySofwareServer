@@ -29,13 +29,13 @@ public class HorizontalProperty {
 
     public boolean addUser(Client user) {
 //        if(treeUsers.getRoot() != null) {
-            boolean isExistUser = treeUsers.checkExistUser(user.getNameUser());
-            if (!isExistUser) {
-                treeUsers.add(0, new NodeUser(++countUsers, user));
+        boolean isExistUser = treeUsers.checkExistUser(user.getNameUser());
+        if (!isExistUser) {
+            treeUsers.add(0, new NodeUser(++countUsers, user));
 //            treeUsers.printBreadth();
-                return true;
-            }
-            treeUsers.printBreadth();
+            return true;
+        }
+        treeUsers.printBreadth();
 //        }
         return false;
     }
@@ -52,7 +52,6 @@ public class HorizontalProperty {
         treeProperties.setRoot(new NodeProperties(0, horizontalProperty));
         treeUsers.setRoot(new NodeUser(0, new Client("root")));
     }
-
 
 
     public void addPropertyToClient(int idFather, int idProperty) {
@@ -89,10 +88,10 @@ public class HorizontalProperty {
     }
 
     public String getName() {
-        if(name == null){
+        if (name == null) {
             return Persistence.getNameHorizontalPropertyToFile();
-        }else{
-        return name;
+        } else {
+            return name;
         }
     }
 
@@ -177,7 +176,8 @@ public class HorizontalProperty {
     }
 
     public void setCountProperties(AtomicInteger atomicInteger) {
-        countProperties = atomicInteger.get();
+//        countProperties = atomicInteger.get();
+        countProperties = Persistence.calculateNumberCount("data/HorizontalProperty.xml");
     }
 
     public NodeProperties searchPropertyToUser(int idProperty) {
@@ -193,6 +193,12 @@ public class HorizontalProperty {
     }
 
     public void setCountUsers(AtomicInteger atomicInteger1) {
+//        countProperties = Persistence.calculateNumberCount("data/HorizontalProperty.xml");
         countUsers = atomicInteger1.get();
+    }
+
+    public void setNameToUser(int idUser, String emailUser) {
+        NodeUser nodeUser = treeUsers.search(idUser);
+        nodeUser.getData().setName(emailUser);
     }
 }
